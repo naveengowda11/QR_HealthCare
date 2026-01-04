@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Doctor Login</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <span>Doctor Access</span>
+  <div>
+    <a href="home.html">Home</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- DOCTOR LOGIN -->
+<div class="card" id="doctorLoginCard">
+  <h2>Doctor Login</h2>
+  <input id="dEmail" placeholder="Doctor Email">
+  <input id="dPass" type="password" placeholder="Password">
+  <button class="primary" onclick="doctorLogin()">Login</button>
+</div>
+
+<!-- DOCTOR DASHBOARD -->
+<div class="card" id="doctorDash" style="display:none;">
+  <h2>Doctor Dashboard</h2>
+  <p>Paste the patient QR code link to access full medical records.</p>
+  <input id="qrLink" placeholder="Paste Patient QR Link">
+  <button class="primary" onclick="loadPatient()">View Patient Record</button>
+  <pre id="output"></pre>
+  <button class="secondary" onclick="logoutDoctor()">Logout</button>
+</div>
+
+</div>
+
+<script>
+async function doctorLogin(){
+  const res = await fetch("/api/doctor/login",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      email:dEmail.value,
+      password:dPass.value
+    })
+  });
+
+  if(res.ok){
+    document.getElementById("doctorLoginCard").style.display="none";
+    document.getElementById("doctorDash").style.display="block";
+  } else {
+    alert("Invalid doctor credentials");
+  }
+}
+
+async function loadPatient(){
+  try{
+    const id = new URL(qrLink.value).searchParams.get("id");
+    const res = await fetch(`/api/patient/full/${id}`);
+    if(!res.ok){
+      alert("Invalid or unauthorized QR");
+      return;
+    }
+    const data = await res.json();
+    output.textContent = JSON.stringify(data,null,2);
+  }catch{
+    alert("Invalid QR link format");
+  }
+}
+
+function logoutDoctor(){
+  location.reload();
+}
+</script>
+
+</body>
+</html>

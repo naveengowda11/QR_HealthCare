@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hospital Home</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <span id="hospitalName"></span>
+  <div>
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Register Patient</a>
+    <a href="doctor.html">Doctor Login</a>
+    <a href="about.html">About</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="card">
+  <h2>Welcome to QR Health Access System</h2>
+  <p>
+    From this dashboard, hospitals can register patients, doctors can access
+    verified medical records, and emergency responders can retrieve critical
+    life-saving information through QR codes.
+  </p>
+</div>
+
+<div class="card">
+  <h3>Quick Actions</h3>
+  <button class="primary" onclick="location.href='dashboard.html'">
+    Register New Patient
+  </button>
+  <button class="secondary" onclick="location.href='doctor.html'">
+    Doctor Login
+  </button>
+</div>
+
+<div class="card">
+  <h3>Emergency Demo</h3>
+  <p>
+    Scan a patient QR code to instantly view emergency-safe medical information.
+  </p>
+</div>
+
+</div>
+
+<script>
+async function checkSession(){
+  const res = await fetch("/api/session");
+  const data = await res.json();
+  if(!data.logged) location.href="login.html";
+  hospitalName.innerText = data.name;
+}
+checkSession();
+
+function logout(){
+  fetch("/api/logout").then(()=>location.href="login.html");
+}
+</script>
+
+</body>
+</html>

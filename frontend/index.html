@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QR Health Access System</title>
+
+<style>
+:root{
+  --bg:#f6f5f1;
+  --card:#ffffff;
+  --primary:#6b705c;
+  --secondary:#a5a58d;
+  --accent:#b7b7a4;
+  --text:#2f3e46;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  background:var(--primary);
+  color:#fff;
+  padding:30px 50px;
+}
+header h1{margin:0;font-size:28px;}
+header p{margin-top:6px;opacity:.9;}
+
+nav{
+  background:#e9e8e4;
+  padding:12px 40px;
+}
+nav a{
+  margin-right:20px;
+  color:var(--text);
+  text-decoration:none;
+  font-weight:500;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:40px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:30px;
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
+  margin-bottom:40px;
+}
+
+.hidden{display:none;}
+
+input,textarea{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #d6d3c9;
+}
+textarea{resize:vertical;}
+
+button{
+  margin-top:16px;
+  padding:14px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  background:var(--primary);
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+}
+button.secondary{background:var(--secondary);}
+
+.section-tabs button{
+  width:auto;
+  margin-right:10px;
+}
+
+pre{
+  background:#efeee9;
+  padding:16px;
+  border-radius:10px;
+  margin-top:16px;
+  overflow:auto;
+}
+
+footer{
+  text-align:center;
+  padding:30px;
+  color:#6c757d;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>QR Health Access System</h1>
+  <p>Hospital-verified emergency & clinical health information</p>
+</header>
+
+<nav>
+  <a href="#hospitalReg">Hospital Register</a>
+  <a href="#hospitalLogin">Hospital Login</a>
+  <a href="#doctorLogin">Doctor Login</a>
+  <a href="#about">About</a>
+</nav>
+
+<div class="container">
+
+<!-- HOSPITAL REGISTRATION -->
+<div id="hospitalReg" class="card">
+  <h2>Hospital Registration</h2>
+  <input id="regName" placeholder="Hospital Name">
+  <input id="regEmail" placeholder="Email">
+  <input id="regPass" type="password" placeholder="Password">
+  <button onclick="registerHospital()">Register Hospital</button>
+</div>
+
+<!-- HOSPITAL LOGIN -->
+<div id="hospitalLogin" class="card">
+  <h2>Hospital Login</h2>
+  <input id="hEmail" placeholder="Email">
+  <input id="hPass" type="password" placeholder="Password">
+  <button onclick="hospitalLogin()">Login</button>
+</div>
+
+<!-- HOSPITAL DASHBOARD -->
+<div id="hospitalDash" class="card hidden">
+  <h2>Hospital Dashboard – Patient Registration</h2>
+
+  <div class="section-tabs">
+    <button onclick="showSection('basic')">Basic</button>
+    <button onclick="showSection('medical')">Medical</button>
+    <button onclick="showSection('clinical')">Clinical</button>
+  </div>
+
+  <div id="basic">
+    <input id="full_name" placeholder="Full Name">
+    <input id="age" placeholder="Age">
+    <input id="gender" placeholder="Gender">
+    <input id="blood_group" placeholder="Blood Group">
+    <input id="phone" placeholder="Phone">
+    <input id="emergency_contact" placeholder="Emergency Contact">
+  </div>
+
+  <div id="medical" class="hidden">
+    <textarea id="allergies" placeholder="Allergies"></textarea>
+    <textarea id="chronic_conditions" placeholder="Chronic Conditions"></textarea>
+    <textarea id="medications" placeholder="Current Medications"></textarea>
+    <textarea id="surgeries" placeholder="Past Surgeries"></textarea>
+  </div>
+
+  <div id="clinical" class="hidden">
+    <input id="height" placeholder="Height">
+    <input id="weight" placeholder="Weight">
+    <textarea id="disabilities" placeholder="Disabilities"></textarea>
+    <textarea id="notes" placeholder="Additional Notes"></textarea>
+    <label>Upload Medical Reports (multiple allowed)</label>
+    <input id="reports" type="file" multiple>
+  </div>
+
+  <button onclick="registerPatient()">Save Patient & Generate QR</button>
+  <img id="qrImage" class="hidden" width="180">
+
+  <button class="secondary" onclick="logoutHospital()">Logout</button>
+</div>
+
+<!-- DOCTOR LOGIN -->
+<div id="doctorLogin" class="card">
+  <h2>Doctor Login</h2>
+  <input id="dEmail" placeholder="Doctor Email">
+  <input id="dPass" type="password" placeholder="Password">
+  <button onclick="doctorLogin()">Login</button>
+</div>
+
+<!-- DOCTOR DASHBOARD -->
+<div id="doctorDash" class="card hidden">
+  <h2>Doctor Dashboard</h2>
+  <input id="qrLink" placeholder="Paste Patient QR Link">
+  <button onclick="loadFullPatient()">View Full Patient Record</button>
+  <pre id="doctorOutput"></pre>
+</div>
+
+<!-- EMERGENCY VIEW -->
+<div id="emergency" class="card hidden">
+  <h2>Emergency Patient Information</h2>
+  <pre id="emergencyOutput"></pre>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="card">
+  <h2>About</h2>
+  <p>
+    This system ensures verified medical information is always accessible during
+    emergencies while maintaining privacy and controlled access for doctors.
+  </p>
+</div>
+
+</div>
+
+<footer>
+  Student MVP · Imagine Cup
+</footer>
+
+<script>
+const API="/api";
+let hospitalId=null;
+const params=new URLSearchParams(window.location.search);
+const pid=params.get("id");
+
+/* SECTION SWITCH */
+function showSection(id){
+  ["basic","medical","clinical"].forEach(s=>{
+    document.getElementById(s).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+}
+
+/* HOSPITAL REGISTER */
+async function registerHospital(){
+  const res=await fetch(API+"/hospital/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      name:regName.value,
+      email:regEmail.value,
+      password:regPass.value
+    })
+  });
+  alert(res.ok?"Hospital registered successfully":"Hospital already exists");
+}
+
+/* HOSPITAL LOGIN */
+async function hospitalLogin(){
+  const res=await fetch(API+"/hospital/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email:hEmail.value,password:hPass.value})
+  });
+  const data=await res.json();
+  if(res.ok){
+    hospitalId=data.hospital_id;
+    hospitalDash.classList.remove("hidden");
+    document.getElementById("hospitalDash").scrollIntoView();
+  } else alert("Invalid hospital credentials");
+}
+
+/* LOGOUT */
+function logoutHospital(){
+  hospitalId=null;
+  hospitalDash.classList.add("hidden");
+  hospitalLogin.scrollIntoView();
+}
+
+/* REGISTER PATIENT + QR */
+async function registerPatient(){
+  if(!hospitalId){
+    alert("Please login first");
+    return;
+  }
+
+  const form=new FormData();
+  form.append("hospital_id",hospitalId);
+
+  ["full_name","age","gender","blood_group","phone","emergency_contact",
+   "allergies","chronic_conditions","medications","surgeries",
+   "height","weight","disabilities","notes"].forEach(f=>{
+    form.append(f,window[f].value);
+  });
+
+  [...reports.files].forEach(file=>{
+    form.append("reports",file);
+  });
+
+  const res=await fetch(API+"/patient/create",{method:"POST",body:form});
+  const data=await res.json();
+
+  if(!data.qr){
+    alert("QR generation failed");
+    console.log(data);
+    return;
+  }
+
+  qrImage.src="data:image/png;base64,"+data.qr;
+  qrImage.classList.remove("hidden");
+}
+
+/* DOCTOR LOGIN */
+async function doctorLogin(){
+  const res=await fetch(API+"/doctor/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email:dEmail.value,password:dPass.value})
+  });
+  if(res.ok){
+    doctorDash.classList.remove("hidden");
+    doctorDash.scrollIntoView();
+  } else alert("Invalid doctor credentials");
+}
+
+/* DOCTOR VIEW */
+async function loadFullPatient(){
+  const id=new URL(qrLink.value).searchParams.get("id");
+  const res=await fetch(API+`/patient/full/${id}`);
+  doctorOutput.textContent=JSON.stringify(await res.json(),null,2);
+}
+
+/* EMERGENCY AUTO LOAD */
+if(pid){
+  emergency.classList.remove("hidden");
+  fetch(API+`/patient/emergency/${pid}`)
+    .then(r=>r.json())
+    .then(d=>emergencyOutput.textContent=JSON.stringify(d,null,2));
+}
+
+/* START PAGE */
+window.onload=()=>{
+  hospitalReg.scrollIntoView();
+};
+</script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hospital Login</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <h2>Hospital Login</h2>
+</header>
+
+<div class="container">
+  <div class="card">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button class="primary" onclick="login()">Login</button>
+    <button class="secondary" onclick="location.href='register.html'">
+      Create Hospital Account
+    </button>
+  </div>
+</div>
+
+<script>
+async function login(){
+  const res = await fetch("/api/hospital/login",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      email:email.value,
+      password:password.value
+    })
+  });
+  if(res.ok) location.href="home.html";
+  else alert("Invalid credentials");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About – QR Health Access System</title>
+<link rel="stylesheet" href="styles.css">
+
+<style>
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+.member{
+  text-align:center;
+}
+.member img{
+  width:160px;
+  height:160px;
+  object-fit:cover;
+  border-radius:50%;
+  margin-bottom:15px;
+  border:4px solid #d6d3c9;
+}
+.member h3{
+  margin:10px 0 5px;
+}
+.member p{
+  text-align:justify;
+  font-size:14px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <span>About Project</span>
+  <div>
+    <a href="dashboard.html">Dashboard</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- PROJECT DESCRIPTION -->
+<div class="card">
+  <h2>QR Health Access System</h2>
+  <p>
+    QR Health Access System is a hospital-driven digital health platform designed
+    to solve one of the most critical problems in emergency healthcare: the lack
+    of verified patient medical information at the point of care. In real-world
+    emergencies, patients are often unconscious or unable to communicate their
+    medical history, leading doctors to make decisions with incomplete data.
+  </p>
+  <p>
+    This system ensures that patient information is entered and verified only
+    by hospitals, eliminating errors caused by self-reported data. Each patient
+    is issued a unique QR code that provides limited but life-saving information
+    during emergencies, while full medical records remain securely accessible
+    only to authorized doctors.
+  </p>
+  <p>
+    By combining role-based access control, secure data handling, and QR-based
+    retrieval, the platform bridges the gap between emergency response and
+    informed clinical decision-making. The solution is designed as a centralized
+    national platform, scalable across hospitals, and adaptable for future
+    integration with government health systems and AI-driven diagnostics.
+  </p>
+</div>
+
+<!-- TEAM SECTION -->
+<div class="card">
+  <h2>Our Team</h2>
+
+  <div class="team-grid">
+
+    <!-- MEMBER 1 -->
+    <div class="member">
+      <img src="/uploads/team/naveen.jpg" alt="Naveen">
+      <h3>Naveen Kumar B</h3>
+      <p>
+        Naveen Kumar B was responsible for designing and implementing the complete backend
+        architecture of the QR Health Access System. He developed the authentication
+        flow for hospitals, session-based access control, and ensured that patient
+        data ownership is strictly tied to the registering hospital. He also handled
+        database schema design, patient record management, and secure file storage
+        for medical reports such as CT scans and laboratory documents.
+      </p>
+      <p>
+        In addition to backend development, Naveen implemented the QR code generation
+        logic, ensuring that each QR uniquely maps to a verified patient record and
+        correctly exposes only emergency-safe information. He focused on building a
+        stable, scalable MVP architecture suitable for real-world deployment and
+        Imagine Cup evaluation, while keeping security, privacy, and performance as
+        top priorities throughout development.
+      </p>
+    </div>
+
+    <!-- MEMBER 2 -->
+    <div class="member">
+      <img src="/uploads/team/yashwin.jpg" alt="Member 2">
+      <h3>Yashwin Gowda K</h3>
+      <p>
+        Yashwin Gowda K was primarily responsible for frontend development and user interface
+        design. They designed the multi-page layout of the system, including hospital
+        login, registration, dashboard, emergency access, and doctor views. Special
+        attention was given to creating a clean, professional, and hospital-grade UI
+        that aligns with real electronic medical record systems.
+      </p>
+      <p>
+        They structured complex patient registration forms into logical sections such
+        as basic information, medical history, clinical data, and document uploads,
+        ensuring usability for hospital staff. Their work focused on clarity, ease of
+        navigation, and visual consistency to ensure the platform is intuitive for
+        both demonstrations and potential real-world usage.
+      </p>
+    </div>
+
+    <!-- MEMBER 3 -->
+    <div class="member">
+      <img src="/uploads/team/shalini.jpg" alt="Member 3">
+      <h3>Shalini M G</h3>
+      <p>
+         Shalini M G contributed extensively to research, problem analysis, and domain
+        understanding of healthcare workflows. They studied real emergency scenarios
+        to identify what information is truly critical during first response and
+        helped define the distinction between emergency-access data and full medical
+        records.
+      </p>
+      <p>
+        They played a key role in shaping the system’s access control logic and
+        emergency data presentation, ensuring that the solution prioritizes patient
+        safety while maintaining privacy. Their insights helped align the project
+        closely with real hospital practices and emergency response protocols.
+      </p>
+    </div>
+
+    <!-- MEMBER 4 -->
+    <div class="member">
+      <img src="/uploads/team/priya.jpg" alt="Member 4">
+      <h3>Priya K</h3>
+      <p>
+        Priya K focused on documentation, presentation strategy, and Imagine Cup
+        alignment. They helped structure the project narrative, ensuring that the
+        problem statement, solution, impact, and future scope are clearly articulated
+        for judges and stakeholders.
+      </p>
+      <p>
+        They also contributed to testing workflows, validating edge cases, and
+        preparing demonstration scenarios that highlight the system’s strengths.
+        Their work ensured that the project is not only technically sound but also
+        communicated effectively as a scalable, socially impactful solution.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+function logout(){
+  fetch("/api/logout").then(()=>location.href="login.html");
+}
+</script>
+
+</body>
+</html>

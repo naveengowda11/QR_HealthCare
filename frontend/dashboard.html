@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hospital Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <span id="hospitalName"></span>
+  <div>
+    <a href="about.html">About</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="card">
+  <h2>Patient Registration</h2>
+
+  <!-- SECTION TABS -->
+  <div style="margin-bottom:20px;">
+    <button onclick="show('basic')">Basic</button>
+    <button onclick="show('medical')">Medical</button>
+    <button onclick="show('clinical')">Clinical</button>
+    <button onclick="show('docs')">Reports</button>
+  </div>
+
+  <!-- BASIC -->
+  <div id="basic">
+    <input id="full_name" placeholder="Full Name">
+    <input id="age" placeholder="Age">
+    <input id="gender" placeholder="Gender">
+    <input id="blood_group" placeholder="Blood Group">
+    <input id="phone" placeholder="Phone Number">
+    <input id="emergency_contact" placeholder="Emergency Contact">
+  </div>
+
+  <!-- MEDICAL -->
+  <div id="medical" style="display:none;">
+    <textarea id="allergies" placeholder="Allergies"></textarea>
+    <textarea id="chronic_conditions" placeholder="Chronic Conditions"></textarea>
+    <textarea id="medications" placeholder="Current Medications"></textarea>
+    <textarea id="surgeries" placeholder="Past Surgeries"></textarea>
+    <textarea id="family_history" placeholder="Family Medical History"></textarea>
+  </div>
+
+  <!-- CLINICAL -->
+  <div id="clinical" style="display:none;">
+    <input id="height" placeholder="Height (cm)">
+    <input id="weight" placeholder="Weight (kg)">
+    <input id="bp" placeholder="Blood Pressure">
+    <textarea id="disabilities" placeholder="Disabilities (if any)"></textarea>
+    <textarea id="notes" placeholder="Doctor Notes"></textarea>
+  </div>
+
+  <!-- REPORTS -->
+  <div id="docs" style="display:none;">
+    <label>Upload Medical Reports (PDF / Images)</label>
+    <input id="reports" type="file" multiple>
+  </div>
+
+  <button class="primary" onclick="registerPatient()">Save Patient & Generate QR</button>
+  <img id="qr" style="display:none;width:180px;margin-top:20px;">
+</div>
+
+</div>
+
+<script>
+async function checkSession(){
+  const res = await fetch("/api/session");
+  const data = await res.json();
+  if(!data.logged) location.href="login.html";
+  hospitalName.innerText = data.name;
+}
+checkSession();
+
+function logout(){
+  fetch("/api/logout").then(()=>location.href="login.html");
+}
+
+function show(id){
+  ["basic","medical","clinical","docs"].forEach(s=>{
+    document.getElementById(s).style.display="none";
+  });
+  document.getElementById(id).style.display="block";
+}
+
+async function registerPatient(){
+  const form = new FormData();
+
+  [
+    "full_name","age","gender","blood_group","phone","emergency_contact",
+    "allergies","chronic_conditions","medications","surgeries",
+    "family_history","height","weight","bp","disabilities","notes"
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) form.append(id, el.value);
+  });
+
+  [...reports.files].forEach(f => form.append("reports", f));
+
+  const res = await fetch("/api/patient/create",{
+    method:"POST",
+    body:form
+  });
+
+  const data = await res.json();
+  if(!data.qr){
+    alert("QR generation failed");
+    return;
+  }
+  qr.src = "data:image/png;base64," + data.qr;
+  qr.style.display="block";
+}
+</script>
+
+</body>
+</html>

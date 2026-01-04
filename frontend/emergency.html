@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Emergency Access</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header><h2>Emergency Patient Information</h2></header>
+
+<div class="container">
+  <div class="card">
+    <pre id="out"></pre>
+  </div>
+</div>
+
+<script>
+const id = new URLSearchParams(location.search).get("id");
+fetch(`/api/emergency/${id}`)
+  .then(r=>r.json())
+  .then(d=> out.textContent = JSON.stringify(d,null,2));
+</script>
+
+</body>
+</html>

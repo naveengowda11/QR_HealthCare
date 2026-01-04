@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hospital Registration</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <h2>Hospital Registration</h2>
+</header>
+
+<div class="container">
+  <div class="card">
+    <input id="name" placeholder="Hospital Name">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button class="primary" onclick="register()">Register</button>
+  </div>
+</div>
+
+<script>
+async function register(){
+  const res = await fetch("/api/hospital/register",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      name:name.value,
+      email:email.value,
+      password:password.value
+    })
+  });
+  if(res.ok){
+    alert("Registered successfully");
+    location.href="login.html";
+  } else alert("Hospital already exists");
+}
+</script>
+
+</body>
+</html>
