@@ -95,8 +95,8 @@ QR-health_access/
 
 ## 🚀 Getting Started
 
-### 1️⃣ Clone the Repository
-```bash
+1️⃣ Clone the Repository
+
 git clone https://github.com/your-username/qr-health-access-system.git
 
 cd qr-health-access-system
@@ -111,7 +111,7 @@ python app.py
 
 4️⃣ Open in Browser
 
-http://127.0.0.1:5000
+http://127.0.0.1:5000 
 
 🧪 Demo Credentials (MVP)
 Doctor Accounts
